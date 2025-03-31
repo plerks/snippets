@@ -8,7 +8,7 @@ tasks.json:
 {
   "version": "2.0.0",
   "tasks": [
-    { // rust不用cargo，单文件编译与调试的配置
+    { // rust不使用cargo，单文件编译与调试的配置
       "label": "rustc build",
       "type": "shell",
       "command": "rustc",
@@ -36,6 +36,59 @@ launch.json:
             "cwd": "${workspaceFolder}\\out",
             "environment": [],
             "externalConsole": false,
+            "preLaunchTask": "rustc build"
+        }
+    ]
+}
+```
+
+## Linux下
+tasks.json:
+```json
+{
+    "version": "2.0.0",
+    "tasks": [
+      { // rust不使用cargo，单文件编译与调试的配置
+        "label": "rustc build",
+        "type": "shell",
+        "command": "rustc",
+        "args": [
+          "-g",
+          "${file}",
+          "-o",
+          "${workspaceFolder}/out/executables/${fileBasenameNoExtension}"  // out/executables这个文件夹要提前创建好，不然rustc不会自动创建，会报错
+        ]
+      }
+    ]
+  }
+```
+launch.json:
+```json
+{
+    "configurations": [
+        {
+            "name": "(gdb) 启动",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/out/executables/${fileBasenameNoExtension}",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/out",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "为 gdb 启用整齐打印",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "将反汇编风格设置为 Intel",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                }
+            ],
             "preLaunchTask": "rustc build"
         }
     ]
