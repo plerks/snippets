@@ -31,8 +31,8 @@ launch.json:
 {
     "configurations": [
         {
-            "name": "(Windows) Launch",
-            "type": "cppvsdbg", // 这里得是cppvsdbg，windows下rustc是用的msvc的工具链(从有.pdb文件就可以看出来)，type得是cppvsdbg
+            "name": "(rust single file) Launch",
+            "type": "cppdbg", // windows下用`rustup show`查看，如果用的是msvc工具链，type得是cppvsdbg
             "request": "launch",
             "program": "${workspaceFolder}\\out\\executables\\${fileBasenameNoExtension}.exe",
             "args": [],
@@ -40,11 +40,30 @@ launch.json:
             "cwd": "${workspaceFolder}\\out",
             "environment": [],
             "externalConsole": false,
+            "setupCommands": [
+                {
+                    "description": "为 gdb 启用整齐打印",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "将反汇编风格设置为 Intel",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                }
+            ],
             "preLaunchTask": "rustc build"
         }
     ]
 }
 ```
+
+### 关于rust toolchain
+windows下如果rust用的是msvc的工具链(`stable-x86_64-pc-windows-msvc`)，上面配置里的type得写`"type": "cppvsdbg"`。
+
+最好切换成用MinGW（切换成用MinGW，VSCode的支持好一点，运行之后断点能停住）。运行：`rustup install stable-x86_64-pc-windows-gnu`，`rustup default stable-x86_64-pc-windows-gnu`，然后改成`"type": "cppdbg"`。
+
+运行`rustup show`可以查看当前已安装的和正在使用的工具链。
 
 ## Linux下
 tasks.json:
@@ -71,7 +90,7 @@ launch.json:
 {
     "configurations": [
         {
-            "name": "(gdb) 启动",
+            "name": "(rust single file) Launch",
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/out/executables/${fileBasenameNoExtension}",
