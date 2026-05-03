@@ -1,0 +1,1 @@
+配置好 miniconda 并创建虚拟环境后，在 vscode 中，按 `Ctrl+Shift+P` 打开命令面板。输入 `Python: Select Interpreter`，选创建的虚拟环境，这样 vscode 就会用虚拟环境来执行 python。
